@@ -33,17 +33,21 @@ class Commands(object):
         """
         Delegates command request to the right command function
         """
-        if(command.startswith("help")):
+        if(string.strip(command) == "help"):
+            return self.help("")
+        elif(command.startswith("help ")):
             argument = string.strip(command[4:])
             return self.help(argument)
         elif(command.startswith("random ") or command.startswith("choice ")):
             arguments = string.strip(command[6:])
             if(arguments != 0):
                 return self.random(arguments)
-        elif(command.startswith("scale")):
+        elif(string.strip(command) == "scale"):
+            return self.scale("")
+        elif(command.startswith("scale ")):
             argument = string.strip(command[5:])
             return self.scale(argument)
-        elif(command.startswith("question")):
+        elif(command.startswith("question ")):
             arguments = string.strip(command[8:])
             if(arguments != 0):
                 return self.question()
