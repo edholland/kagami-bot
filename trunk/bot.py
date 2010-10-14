@@ -169,9 +169,6 @@ class Bot(object):
         message_to_bot_match = re.match(message_to_bot_pattern, line)
         if(command_match):
             # The message is a command for the bot
-            #sender = command_match.group(1)
-            #receiver = command_match.group(2)
-            #command = command_match.group(3)
             sender, receiver, command = command_match.groups()
             try:
                 answer = self.commands.do(command)
@@ -184,8 +181,6 @@ class Bot(object):
                 print "Bad command syntax"
         elif(message_to_bot_match):
             # A message (that is not a command) has been sent to the bot)
-            #sender = message_to_bot_match.group(1)
-            #message = message_to_bot_match.group(2)
             sender, message = message_to_bot_match.groups()
             answer = ["Hai!",
                        "I'm a bot made by Peter Andersson < peter@keiji.se >",

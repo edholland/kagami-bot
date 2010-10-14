@@ -39,7 +39,7 @@ port = 6667
 
 # Channels to join at startup
 # Separate multiple channels with ','
-channels = "#aimbot"
+channels = "#kagami_test"
 
 # Message that will be shown when the bot
 # leaves the server
