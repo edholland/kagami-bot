@@ -20,7 +20,6 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 
 from socket import socket
 from collections import deque
-import string
 import re
 import time
 
@@ -88,12 +87,12 @@ class Bot(object):
                         self.connected = False
                         print "Connection timeout"
                 readbuffer += self.socket.recv(1024)
-                lines = string.split(readbuffer,"\n")
+                lines = readbuffer.split("\n")
                 readbuffer = lines.pop()
                 for line in lines:  
                     time_of_last_activity = time.time()
-                    line=string.strip(line)
-                    sline=string.split(line)
+                    line = line.strip()
+                    sline = line.split()
                     self.print_line(line)  
                     if(sline[0]=="PING"):
                         # The PING PONG game
@@ -140,8 +139,8 @@ class Bot(object):
         """
         Prints an IRC message/line to the console.
         """
-        sline=string.split(line)
-        if(sline[0]!="PING" and sline[1]!="JOIN" and sline[1]!="QUIT"):
+        sline = line.split()
+        if(sline[0] != "PING" and sline[1] != "JOIN" and sline[1] != "QUIT"):
             print "%s - %s" % (time.strftime("%H:%M", time.localtime()), line)
     
     def send_message(self, to, messages):
@@ -151,7 +150,7 @@ class Bot(object):
         if((self.time_of_last_sent_line - time.time()) < 10):
             self.wait_before_sending_line = 0.0
         for line in messages:
-            line = string.rstrip(line)
+            line = line.rstrip()
             # Sleep for a short time to prevent flooding
             time.sleep(self.wait_before_sending_line)
             self.wait_before_sending_line += 0.2
