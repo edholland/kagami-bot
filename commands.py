@@ -28,30 +28,24 @@ class Commands(object):
     def __init__(self, command_prefix):
         self.command_prefix = command_prefix
         random.seed()
+        self.command_dictionary = {
+                              "choice": self.random,
+                              "help": self.help,
+                              "question": self.question,
+                              "random": self.random,
+                              "scale": self.scale,
+                              }
     
-    def do(self,command):
+    def do(self,command_line):
         """
         Delegates command request to the right command function
         """
-        if(string.strip(command) == "help"):
-            return self.help("")
-        elif(command.startswith("help ")):
-            argument = string.strip(command[4:])
-            return self.help(argument)
-        elif(command.startswith("random ") or command.startswith("choice ")):
-            arguments = string.strip(command[6:])
-            if(arguments != 0):
-                return self.random(arguments)
-        elif(string.strip(command) == "scale"):
-            return self.scale("")
-        elif(command.startswith("scale ")):
-            argument = string.strip(command[5:])
-            return self.scale(argument)
-        elif(command.startswith("question ")):
-            arguments = string.strip(command[8:])
-            if(arguments != 0):
-                return self.question()
-        raise Exception
+        split_command_line = command_line.split()
+        command = split_command_line[0]
+        if(command in self.command_dictionary):
+            return self.command_dictionary[command](command_line[len(command):].strip())
+        else:
+            raise Exception
     
     def help(self, argument):
         """
@@ -110,7 +104,7 @@ class Commands(object):
             return [arguments[result]]
         raise Exception
     
-    def scale(self,message):
+    def scale(self, message):
         """
         Returns a random scale (in procent)
         """
@@ -129,7 +123,7 @@ class Commands(object):
         else:
             return ["%s (%s%%)" % (scale, result)]  
     
-    def question(self):
+    def question(self, question):
         """
         Returns a random positive or negative answer to a question
         """
