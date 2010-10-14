@@ -18,8 +18,6 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from symbol import argument
-import string
 import random
 import re
 
@@ -87,21 +85,20 @@ class Commands(object):
             from_number = digit_random.group(1)
             to_number = digit_random.group(3)
             if(from_number <= to_number):
-                return [str(random.randint(int(from_number), int(to_number)))]
+                return [str(random.randint(int(from_number), int(to_number))).strip()]
         else:
             # Random string
             # random str1 str2 str3 | random str1, str2, str3 | random str1 or str2 or str3
             divided_by_comma = re.match("^.+,.+$", arguments)
             divided_by_or = re.match("^.+ or .+$", arguments)
             if(divided_by_comma):
-                arguments = string.split(arguments,",")
+                arguments = arguments.split(",")
             elif(divided_by_or):
-                arguments = string.split(arguments,"or")
+                arguments = arguments.split("or")
             else:
-                arguments = string.split(arguments)
-            number_of_arguments = len(arguments)
-            result = random.randint(0,  number_of_arguments - 1)
-            return [arguments[result]]
+                arguments = arguments.split()
+            result = random.randint(0,  len(arguments) - 1)
+            return [arguments[result].strip()]
         raise Exception
     
     def scale(self, message):
@@ -135,6 +132,5 @@ class Commands(object):
                   "No way",
                   "Hell yeah!",
                   "Nah no fun"]
-        number_of_answers = len(answers)
-        result = random.randint(0,  number_of_answers - 1)
+        result = random.randint(0,  len(answers) - 1)
         return [answers[result]]
