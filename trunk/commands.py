@@ -124,13 +124,15 @@ class Commands(object):
         """
         Returns a random positive or negative answer to a question
         """
-        answers = ["Yes",
+        answers = [
+                   "Yes",
                   "No",
                   "Yes!!!",
                   "No!!!",
                   "Of course",
                   "No way",
                   "Hell yeah!",
-                  "Nah no fun"]
+                  "Nah no fun",
+                  ]
         result = random.randint(0,  len(answers) - 1)
         return [answers[result]]

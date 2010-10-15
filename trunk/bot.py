@@ -20,26 +20,45 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 
 from socket import socket
 from collections import deque
+from ConfigParser import ConfigParser
 import re
 import time
 
 class Bot(object):
 
-    def __init__(self, setup, commands):
-        self.nick = setup.nick
-        self.nick_original = self.nick
-        self.ident = setup.ident
-        self.real_name = setup.real_name
-        self.host = setup.host
-        self.port = setup.port
-        self.channels = setup.channels
-        self.quit_message = setup.quit_message
-        self.command_prefix = setup.command_prefix
-        self.server_timeout = setup.server_timeout
-        self.connection_wait_timer_start = setup.connection_wait_timer_start
-        self.connection_wait_timer_max = setup.connection_wait_timer_max
-        self.connection_wait_timer_multiplier = setup.connection_wait_timer_multiplier
-        self.commands = commands
+    def __init__(self, setup_filename, command_class):
+        default_values = {
+                          "port": "6667",
+                          "channels": "#kagami_test",
+                          "nick": "kagami",
+                          "ident": "kagami",
+                          "real_name": "kagami",
+                          "quit_message": "",
+                          "command_prefix": "!!",
+                          "server_timeout": "600",
+                          "connection_wait_timer_start": "15",
+                          "connection_wait_timer_max": "900",
+                          "connection_wait_timer_multiplier": "2",
+                          }
+        config = ConfigParser(default_values)
+        config.read(setup_filename)  
+        try:
+            self.host = config.get("server", "host")
+        except:
+            print "Error: Could not find a host address in %s" % setup_filename
+            exit()
+        self.port = config.getint("server", "port")
+        self.channels = config.get("server", "channels")
+        self.nick = config.get("bot", "nick")
+        self.ident = config.get("bot", "ident")
+        self.real_name = config.get("bot", "real_name")
+        self.quit_message = config.get("bot", "quit_message")
+        self.command_prefix = config.get("bot", "command_prefix")
+        self.server_timeout = config.getint("server", "server_timeout")
+        self.connection_wait_timer_start = config.getint("server", "connection_wait_timer_start")
+        self.connection_wait_timer_max = config.getint("server", "connection_wait_timer_max")
+        self.connection_wait_timer_multiplier = config.getint("server", "connection_wait_timer_multiplier")
+        self.commands = command_class(self.command_prefix)
         self.connected = False
         self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
         self.time_of_last_sent_line = 0
@@ -181,9 +200,11 @@ class Bot(object):
         elif(message_to_bot_match):
             # A message (that is not a command) has been sent to the bot)
             sender, message = message_to_bot_match.groups()
-            answer = ["Hai!",
-                       "I'm a bot made by Peter Andersson < peter@keiji.se >",
-                       "Type '%shelp' to see what commands I understand" % self.command_prefix]
+            answer = [
+                      "Hai!",
+                      "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
+                      "Type '%shelp' to see what commands I understand" % self.command_prefix,
+                      ]
             if(self.flood_safe()):
                 self.send_message(sender, answer)
     
