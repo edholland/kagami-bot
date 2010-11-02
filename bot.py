@@ -18,7 +18,7 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from socket import socket
+import socket
 from collections import deque
 from ConfigParser import ConfigParser
 import re
@@ -50,6 +50,7 @@ class Bot(object):
         self.port = config.getint("server", "port")
         self.channels = config.get("server", "channels")
         self.nick = config.get("bot", "nick")
+        self.nick_original = self.nick
         self.ident = config.get("bot", "ident")
         self.real_name = config.get("bot", "real_name")
         self.quit_message = config.get("bot", "quit_message")
@@ -63,12 +64,14 @@ class Bot(object):
         self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
         self.time_of_last_sent_line = 0
         self.wait_before_sending_line = 0.0
+        self.socket_timeout = 120
         
     def connect(self):
         """
         Connects and registers with the IRC Server.
         """
-        self.socket = socket()
+        self.socket = socket.socket()
+        self.socket.settimeout(self.socket_timeout)
         wait_time = self.connection_wait_timer_start
         while self.connected == False:
             try:
@@ -95,21 +98,15 @@ class Bot(object):
         """
         readbuffer=""
         disconnect = False
-        time_of_last_activity = time.time()
+        number_of_socket_timeouts = 0
+        old_bot_leave = "^:%s!.* QUIT .*$" % self.nick_original
         while self.connected:
-            try:    
-                if(time_of_last_activity + self.server_timeout < time.time()):
-                    # Check if server is alive by sending it a PING
-                    self.socket.send("PING %s\r\n" % self.host)
-                    readbuffer += self.socket.recv(1024)
-                    if(readbuffer == ""):
-                        self.connected = False
-                        print "Connection timeout"
+            try:
                 readbuffer += self.socket.recv(1024)
+                number_of_socket_timeouts = 0 # Resets socket timeouts if it receives anything
                 lines = readbuffer.split("\n")
                 readbuffer = lines.pop()
                 for line in lines:  
-                    time_of_last_activity = time.time()
                     line = line.strip()
                     sline = line.split()
                     self.print_line(line)  
@@ -128,11 +125,28 @@ class Bot(object):
                     elif(sline[1]=="PRIVMSG"):
                         # A message has been sent somewhere on the server
                         self.privmsg(line)
+                    elif(self.nick != self.nick_original and
+                         re.match(old_bot_leave, line)):
+                            # Try to get back nick when a user with that nick quits
+                            # A way to Fix wrong nick after a disconnection where the ghost
+                            # from last connection is still around
+                            self.nick = self.nick_original
+                            self.socket.send("NICK %s\r\n" % self.nick)
             except KeyboardInterrupt:
                 # If the bot program receives a keyboard interrupt
                 # it still tries to leave the server in a correct way.
                 disconnect = True
                 self.connected = False
+            except socket.timeout:
+                number_of_socket_timeouts += 1
+                if (number_of_socket_timeouts * self.socket_timeout >= self.server_timeout + self.socket_timeout):
+                    self.connected = False
+                    print "Connection timeout"
+                elif (number_of_socket_timeouts * self.socket_timeout >= self.server_timeout):
+                    self.socket.send("PING %s\r\n" % self.host)
+            except socket.error:
+                self.connected = False
+                print "Connection failed"
         if disconnect:
             self.disconnect()
         else:
@@ -140,9 +154,9 @@ class Bot(object):
     
     def reconnect(self):
         """
-        Disconnects from server and then tries to reconnect.
+        Closes the socket and then tries to reconnect.
         """
-        self.disconnect()
+        self.socket.close()
         self.nick = self.nick_original
         self.connect()
         
