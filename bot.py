@@ -21,12 +21,14 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 import socket
 from collections import deque
 from ConfigParser import ConfigParser
+from konata import Konata
+from commands import Commands
 import re
 import time
 
 class Bot(object):
 
-    def __init__(self, setup_filename, command_class):
+    def __init__(self, setup_filename):
         default_values = {
                           "port": "6667",
                           "channels": "#kagami_test",
@@ -59,12 +61,15 @@ class Bot(object):
         self.connection_wait_timer_start = config.getint("server", "connection_wait_timer_start")
         self.connection_wait_timer_max = config.getint("server", "connection_wait_timer_max")
         self.connection_wait_timer_multiplier = config.getint("server", "connection_wait_timer_multiplier")
-        self.commands = command_class(self.command_prefix)
         self.connected = False
         self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
         self.time_of_last_sent_line = 0
         self.wait_before_sending_line = 0.0
         self.socket_timeout = 120
+        
+        #TODO: make nicer loading of plugins
+        self.konata = Konata(self)
+        self.commands = Commands(self)
         
     def connect(self):
         """
@@ -195,11 +200,14 @@ class Bot(object):
         Parse messages sent on the server and decides
         if some action is required from the bot
         """
+        
+        """
         command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s(.+)$" % self.command_prefix
         command_match = re.match(command_pattern, line)
         message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :(.+)$" % self.nick
         message_to_bot_match = re.match(message_to_bot_pattern, line)
-        if(command_match):
+        #if(command_match):
+        if(False):
             # The message is a command for the bot
             sender, receiver, command = command_match.groups()
             try:
@@ -211,6 +219,11 @@ class Bot(object):
                         self.send_message(receiver, answer)
             except:
                 print "Bad command syntax"
+        else:
+        """
+        self.commands.do(line)
+        self.konata.do(line)
+        """
         elif(message_to_bot_match):
             # A message (that is not a command) has been sent to the bot)
             sender, message = message_to_bot_match.groups()
@@ -221,6 +234,8 @@ class Bot(object):
                       ]
             if(self.flood_safe()):
                 self.send_message(sender, answer)
+        """
+        
     
     def flood_safe(self):
         """

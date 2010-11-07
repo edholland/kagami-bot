@@ -18,13 +18,15 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from plugin import Plugin
 import random
 import re
 
-class Commands(object):
+class Commands(Plugin):
 
-    def __init__(self, command_prefix):
-        self.command_prefix = command_prefix
+    def __init__(self, teh_bot):
+        Plugin.__init__(self, teh_bot)
+        self.command_prefix = teh_bot.command_prefix
         random.seed()
         self.command_dictionary = {
                               "choice": self.random,
@@ -34,16 +36,8 @@ class Commands(object):
                               "scale": self.scale,
                               }
     
-    def do(self,command_line):
-        """
-        Delegates command request to the right command function
-        """
-        split_command_line = command_line.split()
-        command = split_command_line[0]
-        if(command in self.command_dictionary):
-            return self.command_dictionary[command](command_line[len(command):].strip())
-        else:
-            raise Exception
+    def do(self,line):
+        Plugin.do(self, line)
     
     def help(self, argument):
         """
@@ -80,7 +74,7 @@ class Commands(object):
                       "  %sscale" % self.command_prefix,
                       "Type '%shelp command' to see how a command works" % self.command_prefix,
                       ]
-        return answer
+        self.send(answer)
     
     def random(self, arguments):
         """
@@ -93,7 +87,7 @@ class Commands(object):
             from_number = digit_random.group(1)
             to_number = digit_random.group(3)
             if(from_number <= to_number):
-                return [str(random.randint(int(from_number), int(to_number))).strip()]
+                self.send([str(random.randint(int(from_number), int(to_number))).strip()]) 
         else:
             # Random string
             # random str1 str2 str3 | random str1, str2, str3 | random str1 or str2 or str3
@@ -106,8 +100,7 @@ class Commands(object):
             else:
                 arguments = arguments.split()
             result = random.randint(0,  len(arguments) - 1)
-            return [arguments[result].strip()]
-        raise Exception
+            self.send([arguments[result].strip()])
     
     def scale(self, message):
         """
@@ -124,9 +117,9 @@ class Commands(object):
                 scale += "-"
         scale += "|"
         if(message != ""):
-            return ["%s: %s (%s%%)" % (message, scale, result)]
+            self.send(["%s: %s (%s%%)" % (message, scale, result)])
         else:
-            return ["%s (%s%%)" % (scale, result)]  
+            self.send(["%s (%s%%)" % (scale, result)])
     
     def question(self, question):
         """
@@ -143,4 +136,4 @@ class Commands(object):
                   "Nah no fun",
                   ]
         result = random.randint(0,  len(answers) - 1)
-        return [answers[result]]
+        self.send([answers[result]])
