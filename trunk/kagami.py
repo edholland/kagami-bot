@@ -19,10 +19,9 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 """
 
 from bot import Bot
-from commands import Commands
 
 def main():
-    kagami = Bot("setup.cfg", Commands)
+    kagami = Bot("setup.cfg")
     kagami.connect()
 
 if __name__ == '__main__':
