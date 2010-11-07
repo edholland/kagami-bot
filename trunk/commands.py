@@ -37,7 +37,7 @@ class Commands(Plugin):
                               }
     
     def do(self,line):
-        Plugin.do(self, line)
+        return Plugin.do(self, line)
     
     def help(self, argument):
         """

@@ -32,6 +32,7 @@ class Konata(Plugin):
         self.command_dictionary = {
                                    "jankenpon": self.jankenpon,
                                    "rockpaperscissors": self.jankenpon,
+                                   "rockpaperscissorslizardspock": self.jankenpon,
                                    }
         self.jankenpon = {
                           "Rock": ["Lizard", "Spock"],
@@ -42,9 +43,13 @@ class Konata(Plugin):
                           }
         
     def do(self, line):
-        Plugin.do(self, line)
-        if self.sender.startswith("konata"):
+        if Plugin.do(self, line):
+            return True
+        elif self.sender.startswith("konata"):
             self.konata_speaks(line)
+            return True
+        else:
+            return False
     
     def jankenpon (self, argument):
         self.last_jankenpon = random.choice(self.jankenpon.keys())

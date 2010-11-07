@@ -21,10 +21,12 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 import socket
 from collections import deque
 from ConfigParser import ConfigParser
-from konata import Konata
-from commands import Commands
 import re
 import time
+
+# Plugins:
+from konata import Konata
+from commands import Commands
 
 class Bot(object):
 
@@ -61,15 +63,20 @@ class Bot(object):
         self.connection_wait_timer_start = config.getint("server", "connection_wait_timer_start")
         self.connection_wait_timer_max = config.getint("server", "connection_wait_timer_max")
         self.connection_wait_timer_multiplier = config.getint("server", "connection_wait_timer_multiplier")
+        self.bot_info = [
+                      "Hai!",
+                      "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
+                      "Type '%shelp' to see what commands I understand" % self.command_prefix,
+                      ]
         self.connected = False
         self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
         self.time_of_last_sent_line = 0
         self.wait_before_sending_line = 0.0
         self.socket_timeout = 120
-        
-        #TODO: make nicer loading of plugins
-        self.konata = Konata(self)
-        self.commands = Commands(self)
+        self.plugins = [
+                        Commands(self),
+                        Konata(self),
+                        ]
         
     def connect(self):
         """
@@ -194,48 +201,25 @@ class Bot(object):
             self.wait_before_sending_line += 0.2
             self.socket.send("PRIVMSG %s :%s\r\n" % (to, line))
         self.time_of_last_sent_line = time.time()
+    
+    def send_message_without_flood(self, to, messages):
+        if self.flood_safe():
+            self.send_message(to, messages)
         
     def privmsg(self, line):
         """
-        Parse messages sent on the server and decides
-        if some action is required from the bot
+        Sends message sent on the channel to the plugins
         """
-        
-        """
-        command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s(.+)$" % self.command_prefix
-        command_match = re.match(command_pattern, line)
         message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :(.+)$" % self.nick
         message_to_bot_match = re.match(message_to_bot_pattern, line)
-        #if(command_match):
-        if(False):
-            # The message is a command for the bot
-            sender, receiver, command = command_match.groups()
-            try:
-                answer = self.commands.do(command)
-                if(self.flood_safe()):
-                    if(receiver == self.nick or command.startswith("help")):
-                        self.send_message(sender, answer)
-                    else:
-                        self.send_message(receiver, answer)
-            except:
-                print "Bad command syntax"
-        else:
-        """
-        self.commands.do(line)
-        self.konata.do(line)
-        """
-        elif(message_to_bot_match):
-            # A message (that is not a command) has been sent to the bot)
+        plugin_answer = False
+        for plugin in self.plugins:
+            answer = plugin.do(line)
+            plugin_answer = plugin_answer or answer
+        if not plugin_answer and message_to_bot_match:
+            # A message (that was not a command) has been sent to the bot)
             sender, message = message_to_bot_match.groups()
-            answer = [
-                      "Hai!",
-                      "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
-                      "Type '%shelp' to see what commands I understand" % self.command_prefix,
-                      ]
-            if(self.flood_safe()):
-                self.send_message(sender, answer)
-        """
-        
+            self.send_message_without_flood(sender, self.bot_info)
     
     def flood_safe(self):
         """
