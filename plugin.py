@@ -35,6 +35,8 @@ class Plugin(object):
             command = split_command_line[0]
             if(command in self.command_dictionary):
                 self.command_dictionary[command](command_line[len(command):].strip())
+                return True
+        return False
     
     def send (self, message):
         if self.channel == self.teh_bot.nick:
