@@ -81,26 +81,25 @@ class Commands(Plugin):
         Returns a random string or a random integer
         """
         digit_random = re.match("^(\d+) *(-|to){1} *(\d+)$", arguments)
-        if(digit_random):
+        if digit_random:
             # Random integer
             # random x-y | random x to y
             from_number = digit_random.group(1)
             to_number = digit_random.group(3)
             if(from_number <= to_number):
                 self.send([str(random.randint(int(from_number), int(to_number))).strip()]) 
-        else:
+        elif len(arguments) > 0:
             # Random string
             # random str1 str2 str3 | random str1, str2, str3 | random str1 or str2 or str3
             divided_by_comma = re.match("^.+,.+$", arguments)
             divided_by_or = re.match("^.+ or .+$", arguments)
-            if(divided_by_comma):
+            if divided_by_comma:
                 arguments = arguments.split(",")
-            elif(divided_by_or):
+            elif divided_by_or:
                 arguments = arguments.split("or")
             else:
                 arguments = arguments.split()
-            result = random.randint(0,  len(arguments) - 1)
-            self.send([arguments[result].strip()])
+            self.send([random.choice(arguments).strip()])
     
     def scale(self, message):
         """
@@ -116,7 +115,7 @@ class Commands(Plugin):
             else:
                 scale += "-"
         scale += "|"
-        if(message != ""):
+        if len(message) > 0:
             self.send(["%s: %s (%s%%)" % (message, scale, result)])
         else:
             self.send(["%s (%s%%)" % (scale, result)])
@@ -127,13 +126,12 @@ class Commands(Plugin):
         """
         answers = [
                    "Yes",
-                  "No",
-                  "Yes!!!",
-                  "No!!!",
-                  "Of course",
-                  "No way",
-                  "Hell yeah!",
-                  "Nah no fun",
-                  ]
-        result = random.randint(0,  len(answers) - 1)
-        self.send([answers[result]])
+                   "No",
+                   "Yes!!!",
+                   "No!!!",
+                   "Of course",
+                   "No way",
+                   "Hell yeah!",
+                   "Nah no fun",
+                   ]
+        self.send([random.choice(answers)])
