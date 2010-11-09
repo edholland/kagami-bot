@@ -101,6 +101,7 @@ class Bot(object):
         # Register on server
         self.socket.send("NICK %s\r\n" % self.nick)
         self.socket.send("USER %s %s something :%s\r\n" % (self.ident, self.host, self.real_name))
+        self.last_time_sent_nick = time.time()
         # Listen for replies from the server
         self.listen()
     
@@ -111,7 +112,6 @@ class Bot(object):
         readbuffer=""
         disconnect = False
         number_of_socket_timeouts = 0
-        old_bot_leave = "^:%s!.* QUIT .*$" % self.nick_original
         while self.connected:
             try:
                 readbuffer += self.socket.recv(1024)
@@ -133,17 +133,16 @@ class Bot(object):
                     elif(sline[1]=="433"):
                         # 433: Nickname is already in use
                         self.nick += "_"
-                        self.socket.send("NICK %s\r\n" % self.nick)   
+                        self.socket.send("NICK %s\r\n" % self.nick)
                     elif(sline[1]=="PRIVMSG"):
                         # A message has been sent somewhere on the server
                         self.privmsg(line)
-                    elif(self.nick != self.nick_original and
-                         re.match(old_bot_leave, line)):
-                            # Try to get back nick when a user with that nick quits
-                            # A way to Fix wrong nick after a disconnection where the ghost
-                            # from last connection is still around
+                    if(self.nick != self.nick_original and
+                         time.time() - self.last_time_sent_nick > 1800):
+                            # Try to get back original nick if it was used by another user when connecting
                             self.nick = self.nick_original
                             self.socket.send("NICK %s\r\n" % self.nick)
+                            self.last_time_sent_nick = time.time()
             except KeyboardInterrupt:
                 # If the bot program receives a keyboard interrupt
                 # it still tries to leave the server in a correct way.
@@ -170,6 +169,7 @@ class Bot(object):
         """
         self.socket.close()
         self.nick = self.nick_original
+        time.sleep(5)
         self.connect()
         
     def disconnect(self):
@@ -193,6 +193,7 @@ class Bot(object):
         Sends a message to a user or a channel
         """
         if((self.time_of_last_sent_line - time.time()) < 10):
+            # Resets wait time if some time has passed since last sent message
             self.wait_before_sending_line = 0.0
         for line in messages:
             line = line.rstrip()
@@ -208,14 +209,13 @@ class Bot(object):
         
     def privmsg(self, line):
         """
-        Sends message sent on the channel to the plugins
+        A message has been sent in some channel or by a user to the bot
         """
         message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :(.+)$" % self.nick
         message_to_bot_match = re.match(message_to_bot_pattern, line)
         plugin_answer = False
         for plugin in self.plugins:
-            answer = plugin.do(line)
-            plugin_answer = plugin_answer or answer
+            plugin_answer = plugin_answer or plugin.do(line)
         if not plugin_answer and message_to_bot_match:
             # A message (that was not a command) has been sent to the bot)
             sender, message = message_to_bot_match.groups()

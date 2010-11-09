@@ -23,6 +23,9 @@ import random
 import re
 
 class Commands(Plugin):
+    """
+    A plugin containing some basic bot functions
+    """
 
     def __init__(self, teh_bot):
         Plugin.__init__(self, teh_bot)
