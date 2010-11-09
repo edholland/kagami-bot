@@ -24,6 +24,10 @@ import re
 import time
 
 class Konata(Plugin):
+    """
+    An example of how a plugin can be made.
+    This plugin was made so that the bot could interact with another bot called konata.
+    """
     
     def __init__(self, teh_bot):
         Plugin.__init__(self, teh_bot)
@@ -52,11 +56,17 @@ class Konata(Plugin):
             return False
     
     def jankenpon (self, argument):
+        """
+        Used to play rock paper scissors lizard spock with konata
+        """
         self.last_jankenpon = random.choice(self.jankenpon.keys())
         self.time_of_last_jankenpon = time.time()
         self.send([self.last_jankenpon])
         
     def konata_speaks (self, line):
+        """
+        Used to sometimes comment on stuff that konata says
+        """
         pattern = "^:.+ PRIVMSG .+ :(.+)$"
         match = re.match(pattern, line)
         if match:
@@ -78,6 +88,7 @@ class Konata(Plugin):
                     time.sleep(1)
                     self.send([random.choice(answers)])
             elif (jankenpon_match and time.time() - self.time_of_last_jankenpon < 5):
+                # Comment on jankenpon (rock paper scissors...) match with kagami
                 konatas_choice = jankenpon_match.group(1)
                 konata_beats = self.jankenpon[konatas_choice]
                 if konatas_choice == self.last_jankenpon:
@@ -86,5 +97,3 @@ class Konata(Plugin):
                     self.send([random.choice([":(",";(","No","Cheater"])])
                 else:
                     self.send([random.choice(["Ha!","For the win!","Peace of cake"])])
-                
-        
