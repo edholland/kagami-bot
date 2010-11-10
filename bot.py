@@ -23,10 +23,7 @@ from collections import deque
 from ConfigParser import ConfigParser
 import re
 import time
-
-# Plugins:
-from konata import Konata
-from commands import Commands
+import plugins
 
 class Bot(object):
 
@@ -74,8 +71,8 @@ class Bot(object):
         self.wait_before_sending_line = 0.0
         self.socket_timeout = 120
         self.plugins = [
-                        Commands(self),
-                        Konata(self),
+                        plugins.commands.Commands(self),
+                        plugins.konata.Konata(self),
                         ]
         
     def connect(self):
