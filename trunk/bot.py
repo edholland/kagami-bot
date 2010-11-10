@@ -23,11 +23,27 @@ from collections import deque
 from ConfigParser import ConfigParser
 import re
 import time
-import plugins
 
 class Bot(object):
 
     def __init__(self, setup_filename):
+        self.load_setup_file(setup_filename)
+        self.load_plugins(self.plugins_to_load)
+        self.bot_info = [
+                      "Hai!",
+                      "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
+                      "Type '%shelp' to see what commands I understand" % self.command_prefix,
+                      ]
+        self.connected = False
+        self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
+        self.time_of_last_sent_line = 0
+        self.wait_before_sending_line = 0.0
+        self.socket_timeout = 120
+    
+    def load_setup_file(self,setup_filename):
+        """
+        Loads user settings stored in the setup file
+        """
         default_values = {
                           "port": "6667",
                           "channels": "#kagami_test",
@@ -40,9 +56,10 @@ class Bot(object):
                           "connection_wait_timer_start": "15",
                           "connection_wait_timer_max": "900",
                           "connection_wait_timer_multiplier": "2",
+                          "plugins": "",
                           }
         config = ConfigParser(default_values)
-        config.read(setup_filename)  
+        config.read(setup_filename)
         try:
             self.host = config.get("server", "host")
         except:
@@ -60,20 +77,22 @@ class Bot(object):
         self.connection_wait_timer_start = config.getint("server", "connection_wait_timer_start")
         self.connection_wait_timer_max = config.getint("server", "connection_wait_timer_max")
         self.connection_wait_timer_multiplier = config.getint("server", "connection_wait_timer_multiplier")
-        self.bot_info = [
-                      "Hai!",
-                      "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
-                      "Type '%shelp' to see what commands I understand" % self.command_prefix,
-                      ]
-        self.connected = False
-        self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
-        self.time_of_last_sent_line = 0
-        self.wait_before_sending_line = 0.0
-        self.socket_timeout = 120
-        self.plugins = [
-                        plugins.commands.Commands(self),
-                        plugins.konata.Konata(self),
-                        ]
+        self.plugins_to_load = config.get("bot", "plugins").split(",")
+    
+    def load_plugins(self, plugins_to_load):
+        """
+        Imports and loads plugins
+        """
+        self.plugins = []
+        for plugin in plugins_to_load:
+            plugin = plugin.strip().lower()
+            string_import = "import plugins.%s" % plugin
+            string_load_plugin = "self.plugins.append(plugins.%s.%s(self))" % (plugin, plugin.capitalize())
+            try:
+                exec string_import
+                exec string_load_plugin
+            except:
+                print "Failed to load plugin: %s" % plugin
         
     def connect(self):
         """
