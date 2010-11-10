@@ -19,10 +19,9 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 """
 
 import socket
+import time
 from collections import deque
 from ConfigParser import ConfigParser
-import re
-import time
 
 class Bot(object):
 
@@ -30,11 +29,6 @@ class Bot(object):
         self.load_setup_file(setup_filename)
         self.command_info = {}
         self.load_plugins(self.plugins_to_load)
-        self.bot_info = [
-                      "Hai!",
-                      "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
-                      "Type '%shelp' to see what commands I understand" % self.command_prefix,
-                      ]
         self.connected = False
         self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
         self.time_of_last_sent_line = 0
@@ -57,7 +51,7 @@ class Bot(object):
                           "connection_wait_timer_start": "15",
                           "connection_wait_timer_max": "900",
                           "connection_wait_timer_multiplier": "2",
-                          "plugins": "",
+                          "plugins": "commands, help",
                           }
         config = ConfigParser(default_values)
         config.read(setup_filename)
@@ -154,9 +148,10 @@ class Bot(object):
                         # 433: Nickname is already in use
                         self.nick += "_"
                         self.socket.send("NICK %s\r\n" % self.nick)
-                    elif(sline[1]=="PRIVMSG"):
-                        # A message has been sent somewhere on the server
-                        self.privmsg(line)
+                    else:
+                        # Send the line to all loaded plugins
+                        for plugin in self.plugins:
+                            plugin.do(line)
                     if(self.nick != self.nick_original and
                          time.time() - self.last_time_sent_nick > 1800):
                             # Try to get back original nick if it was used by another user when connecting
@@ -226,13 +221,6 @@ class Bot(object):
     def send_message_without_flood(self, to, messages):
         if self.flood_safe():
             self.send_message(to, messages)
-        
-    def privmsg(self, line):
-        """
-        A message has been sent in some channel or by a user to the bot
-        """
-        for plugin in self.plugins:
-            plugin.do(line)
     
     def flood_safe(self):
         """

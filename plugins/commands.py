@@ -59,9 +59,6 @@ class Commands(Plugin):
                                            ],
                              }
     
-    def do(self,line):
-        return Plugin.do(self, line)
-    
     def random(self, arguments):
         """
         Returns a random string or a random integer
