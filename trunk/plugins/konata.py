@@ -63,7 +63,7 @@ class Konata(Plugin):
     
     def jankenpon (self, argument):
         """
-        Used to play rock paper scissors lizard spock with konata
+        Play rock paper scissors lizard spock with konata
         """
         self.last_jankenpon = random.choice(self.jankenpon.keys())
         self.time_of_last_jankenpon = time.time()
@@ -71,7 +71,7 @@ class Konata(Plugin):
         
     def konata_speaks (self, line):
         """
-        Used to sometimes comment on stuff that konata says
+        Sometimes comment on stuff that konata says
         """
         pattern = "^:.+ PRIVMSG .+ :(.+)$"
         match = re.match(pattern, line)

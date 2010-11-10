@@ -27,8 +27,6 @@ class Help(Plugin):
         Plugin.__init__(self, teh_bot)
         self.command_dictionary = {
                                    "help": self.help,
-                                   "hi": self.greeting,
-                                   "hello": self.greeting,
                                    }
         
     def do(self,line):

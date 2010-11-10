@@ -32,6 +32,8 @@ class Plugin(object):
         self.teh_bot = teh_bot
         self.command_dictionary = {}
         self.command_info = {}
+        self.sender = ""
+        self.channel = ""
         self.command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s(.+)$" % teh_bot.command_prefix
     
     def do(self, line):
@@ -56,3 +58,9 @@ class Plugin(object):
         if self.channel == self.teh_bot.nick:
             self.channel = self.sender
         self.teh_bot.send_message_without_flood(self.channel, message)
+        
+    def send_raw_irc_message (self, message):
+        """
+        Sends a raw IRC message to the IRC server
+        """
+        self.teh_bot.socket.send(message)
