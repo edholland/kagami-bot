@@ -85,12 +85,11 @@ class Konata(Plugin):
             jankenpon_match = re.match(jankenpon, says)
             if question_match or scale_match:
                 answers = [
-                       "Don't listen to her!",
-                       "Doh",
-                       "Don't feed the troll!",
+                       "Don't listen to her",
+                       "Don't feed the troll",
                        "Rly? :p",
                        ]
-                if random.randint(0,1):
+                if random.randint(1,3) == 1:
                     time.sleep(1)
                     self.send([random.choice(answers)])
             elif (jankenpon_match and time.time() - self.time_of_last_jankenpon < 5):
