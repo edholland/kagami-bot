@@ -35,6 +35,7 @@ class Help(Plugin):
         message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :.+$" % self.teh_bot.nick
         message_to_bot = re.match(message_to_bot_pattern, line)
         if message_to_bot:
+            #Only answer to private message sent directly to the bot
             self.channel = self.teh_bot.nick
             self.sender = message_to_bot.group(1)
             if not Plugin.do(self, line):
@@ -44,6 +45,9 @@ class Help(Plugin):
             return False
     
     def greeting (self, argument):
+        """
+        Greets the user and tells him/her how to get help on the bot
+        """
         greeting = [
                     "Hai!",
                     "I'm a open source bot written in Python ( http://code.google.com/p/kagami-bot/ )",
@@ -52,6 +56,9 @@ class Help(Plugin):
         self.send(greeting)
     
     def help(self, argument):
+        """
+        Sends list of all commands or info on a specific command
+        """
         command_info = self.teh_bot.command_info
         command_prefix = self.teh_bot.command_prefix
         if argument in command_info:
