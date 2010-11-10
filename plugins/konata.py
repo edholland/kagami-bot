@@ -38,6 +38,12 @@ class Konata(Plugin):
                                    "rockpaperscissors": self.jankenpon,
                                    "rockpaperscissorslizardspock": self.jankenpon,
                                    }
+        self.command_info = {
+                             "jankenpon": [
+                                          "  %sjankenpon" % self.teh_bot.command_prefix,
+                                          "Starts a game of Rock Paper Scissors Lizard Spock with the bot konata",
+                                          ],
+                             }
         self.jankenpon = {
                           "Rock": ["Lizard", "Spock"],
                           "Paper": ["Rock", "Spock"],

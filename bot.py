@@ -28,6 +28,7 @@ class Bot(object):
 
     def __init__(self, setup_filename):
         self.load_setup_file(setup_filename)
+        self.command_info = {}
         self.load_plugins(self.plugins_to_load)
         self.bot_info = [
                       "Hai!",
@@ -82,6 +83,7 @@ class Bot(object):
     def load_plugins(self, plugins_to_load):
         """
         Imports and loads plugins
+        Gets info about commands from the plugins and stores it in command_info
         """
         self.plugins = []
         for plugin in plugins_to_load:
@@ -93,6 +95,8 @@ class Bot(object):
                 exec string_load_plugin
             except:
                 print "Failed to load plugin: %s" % plugin
+        for plugin in self.plugins:
+            self.command_info.update(plugin.command_info)
         
     def connect(self):
         """
@@ -227,15 +231,8 @@ class Bot(object):
         """
         A message has been sent in some channel or by a user to the bot
         """
-        message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :(.+)$" % self.nick
-        message_to_bot_match = re.match(message_to_bot_pattern, line)
-        plugin_answer = False
         for plugin in self.plugins:
-            plugin_answer = plugin_answer or plugin.do(line)
-        if not plugin_answer and message_to_bot_match:
-            # A message (that was not a command) has been sent to the bot)
-            sender, message = message_to_bot_match.groups()
-            self.send_message_without_flood(sender, self.bot_info)
+            plugin.do(line)
     
     def flood_safe(self):
         """

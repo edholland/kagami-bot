@@ -33,51 +33,34 @@ class Commands(Plugin):
         random.seed()
         self.command_dictionary = {
                               "choice": self.random,
-                              "help": self.help,
                               "question": self.question,
                               "random": self.random,
                               "scale": self.scale,
                               }
+        self.command_info = {
+                             "question": [
+                                          "  %squestion QUESTION" % teh_bot.command_prefix,
+                                          "Returns a positive or a negative response to your question",
+                                          ],
+                             "scale":    [
+                                          "  %sscale STATEMENT" % self.command_prefix,
+                                          "  %sscale" % self.command_prefix,
+                                          "Scales your statment in procent",
+                                          "(random number between 1 and 100)",
+                                          ],
+                             "random":    [
+                                           "  %srandom CHOICE1 CHOICE2 CHOICE3" % self.command_prefix,
+                                           "  %srandom CHOICE1, CHOICE2, CHOICE3" % self.command_prefix,
+                                           "  %srandom CHOICE1 or CHOICE2 or CHOICE3" % self.command_prefix,
+                                           "Makes a random choice of the ones provided",
+                                           "  %srandom NUMBER1 - NUMBER2" % self.command_prefix,
+                                           "  %srandom NUMBER1 to NUMBER2" % self.command_prefix,
+                                           "Selects a random number between the two provided",
+                                           ],
+                             }
     
     def do(self,line):
         return Plugin.do(self, line)
-    
-    def help(self, argument):
-        """
-        Returns information about the different commands
-        that the bot understands
-        """
-        if(argument == "%squestion" % self.command_prefix or argument == "question"):
-            answer = [
-                      "  %squestion QUESTION" % self.command_prefix,
-                      "Returns a positive or a negative response to your question",
-                      ]
-        elif(argument == "%sscale" % self.command_prefix or argument == "scale"):
-            answer = [
-                      "  %sscale STATEMENT" % self.command_prefix,
-                      "  %sscale" % self.command_prefix,
-                      "Scales your statment in procent",
-                      "(random number between 1 and 100)",
-                      ]
-        elif(argument == "%srandom" % self.command_prefix or argument == "random"):
-            answer = [
-                      "  %srandom CHOICE1 CHOICE2 CHOICE3" % self.command_prefix,
-                      "  %srandom CHOICE1, CHOICE2, CHOICE3" % self.command_prefix,
-                      "  %srandom CHOICE1 or CHOICE2 or CHOICE3" % self.command_prefix,
-                      "Makes a random choice of the ones provided",
-                      "  %srandom NUMBER1 - NUMBER2" % self.command_prefix,
-                      "  %srandom NUMBER1 to NUMBER2" % self.command_prefix,
-                      "Selects a random number between the two provided",
-                      ]
-        else:
-            answer = [
-                      "I understand:",
-                      "  %squestion" % self.command_prefix,
-                      "  %srandom" % self.command_prefix,
-                      "  %sscale" % self.command_prefix,
-                      "Type '%shelp command' to see how a command works" % self.command_prefix,
-                      ]
-        self.send(answer)
     
     def random(self, arguments):
         """
