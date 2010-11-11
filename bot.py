@@ -20,6 +20,7 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 
 import socket
 import time
+import ssl
 from collections import deque
 from ConfigParser import ConfigParser
 
@@ -52,6 +53,7 @@ class Bot(object):
                           "connection_wait_timer_max": "900",
                           "connection_wait_timer_multiplier": "2",
                           "plugins": "commands, help",
+                          "ssl": "no"
                           }
         config = ConfigParser(default_values)
         config.read(setup_filename)
@@ -61,6 +63,7 @@ class Bot(object):
             print "Error: Could not find a host address in %s" % setup_filename
             exit()
         self.port = config.getint("server", "port")
+        self.ssl = config.getboolean("server", "ssl")
         self.channels = config.get("server", "channels")
         self.nick = config.get("bot", "nick")
         self.nick_original = self.nick
@@ -97,6 +100,8 @@ class Bot(object):
         Connects and registers with the IRC Server.
         """
         self.socket = socket.socket()
+        if self.ssl:
+            self.socket = ssl.SSLSocket(self.socket)
         self.socket.settimeout(self.socket_timeout)
         wait_time = self.connection_wait_timer_start
         while self.connected == False:
