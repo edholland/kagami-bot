@@ -19,6 +19,8 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 """
 
 import re
+import pickle
+import os
 
 class Plugin(object):
     """
@@ -35,6 +37,8 @@ class Plugin(object):
         self.sender = ""
         self.channel = ""
         self.command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s(.+)$" % teh_bot.command_prefix
+        if not os.path.isdir("plugins/save"):
+            os.mkdir("plugins/save/")
     
     def do(self, line):
         """
@@ -64,3 +68,40 @@ class Plugin(object):
         Sends a raw IRC message to the IRC server
         """
         self.teh_bot.socket.send(message)
+    
+    def save_object_to_file(self, object, filename):
+        plugin_filename = self.get_plugin_filename()
+        filepath = "plugins/save/%s.%s.obj" % (plugin_filename, filename)
+        file = open(filepath,"w")
+        pickle.dump(object, file)
+        file.close()
+    
+    def restore_object_from_file(self, filename):
+        plugin_filename = self.get_plugin_filename()
+        filepath = "plugins/save/%s.%s.obj" % (plugin_filename, filename)
+        try:
+            file = open(filepath,"r")
+            object = pickle.load(file)
+            file.close()
+            return object
+        except:
+            return False
+    
+    def get_plugin_filename(self):
+        name = ""
+        string = self.__str__()
+        str_pattern = "^.+\.(.+)\..* .*$"
+        str_match = re.match(str_pattern, string)
+        if str_match:
+            name = str_match.group(1)
+        return name
+    
+    def message_to_bot(self,line):
+        message_to_bot_pattern = "^.+ PRIVMSG %s :.+$" % self.teh_bot.nick
+        message_to_bot = re.match(message_to_bot_pattern, line)
+        return message_to_bot
+    
+    def is_command(self,line):
+        command_pattern = "^.+ PRIVMSG .+ :%s.+$" % self.teh_bot.command_prefix
+        command = re.match(command_pattern, line)
+        return command

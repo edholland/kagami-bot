@@ -30,14 +30,13 @@ class Help(Plugin):
                                    }
         
     def do(self,line):
-        message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :.+$" % self.teh_bot.nick
-        message_to_bot = re.match(message_to_bot_pattern, line)
-        if message_to_bot:
+        if self.message_to_bot(line):
             #Only answer to private message sent directly to the bot
-            self.channel = self.teh_bot.nick
-            self.sender = message_to_bot.group(1)
             if not Plugin.do(self, line):
-                self.greeting("")
+                if not self.is_command(line):
+                    self.greeting("")
+                else:
+                    return False
             return True
         else:
             return False
