@@ -97,11 +97,16 @@ class Plugin(object):
         return name
     
     def message_to_bot(self,line):
-        message_to_bot_pattern = "^.+ PRIVMSG %s :.+$" % self.teh_bot.nick
+        message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :.+$" % self.teh_bot.nick
         message_to_bot = re.match(message_to_bot_pattern, line)
+        if message_to_bot:
+            self.sender = message_to_bot.group(1)
+            self.channel = self.teh_bot.nick
         return message_to_bot
     
     def is_command(self,line):
-        command_pattern = "^.+ PRIVMSG .+ :%s.+$" % self.teh_bot.command_prefix
+        command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s.+$" % self.teh_bot.command_prefix
         command = re.match(command_pattern, line)
+        if command:
+            self.sender, self.channel = command.groups()
         return command
