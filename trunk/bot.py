@@ -21,6 +21,7 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 import socket
 import time
 import ssl
+import os
 from collections import deque
 from ConfigParser import ConfigParser
 
@@ -82,6 +83,8 @@ class Bot(object):
         Imports and loads plugins
         Gets info about commands from the plugins and stores it in command_info
         """
+        if not os.path.isdir("plugins"):
+            os.mkdir("plugins")
         self.plugins = []
         for plugin in plugins_to_load:
             plugin = plugin.strip().lower()
