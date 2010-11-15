@@ -112,7 +112,6 @@ class Bot(object):
             plugin_match = re.match(plugin_pattern, file, re.IGNORECASE)
             if plugin_match:
                 plugin = plugin_match.group(1)
-                print plugin
                 all_plugins.append(plugin)
         return all_plugins
         
