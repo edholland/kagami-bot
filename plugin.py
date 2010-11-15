@@ -86,6 +86,13 @@ class Plugin(object):
             return object
         except:
             return False
+        
+    def append_to_file(self,message,filename):
+        plugin_filename = self.get_plugin_filename()
+        filepath = "plugins/save/%s.%s" % (plugin_filename, filename)
+        file = open(filepath,"a")
+        file.write(message)
+        file.close()
     
     def get_plugin_filename(self):
         name = ""
