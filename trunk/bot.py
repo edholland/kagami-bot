@@ -22,6 +22,7 @@ import socket
 import time
 import ssl
 import os
+import re
 from collections import deque
 from ConfigParser import ConfigParser
 
@@ -53,7 +54,7 @@ class Bot(object):
                           "connection_wait_timer_start": "15",
                           "connection_wait_timer_max": "900",
                           "connection_wait_timer_multiplier": "2",
-                          "plugins": "commands, help",
+                          "plugins": "all",
                           "ssl": "no"
                           }
         config = ConfigParser(default_values)
@@ -85,6 +86,8 @@ class Bot(object):
         """
         if not os.path.isdir("plugins"):
             os.mkdir("plugins")
+        if "all" in plugins_to_load:
+            plugins_to_load = self.get_names_of_all_plugins()
         self.plugins = []
         for plugin in plugins_to_load:
             plugin = plugin.strip().lower()
@@ -97,6 +100,21 @@ class Bot(object):
                 print "Failed to load plugin: %s" % plugin
         for plugin in self.plugins:
             self.command_info.update(plugin.command_info)
+            
+    def get_names_of_all_plugins(self):
+        """
+        Returns a list of names for all plugins in the plugins folder
+        """
+        all_plugins = []
+        plugin_pattern = "^([^_].*)\.py$"
+        plugin_folder = os.listdir("plugins")
+        for file in plugin_folder:
+            plugin_match = re.match(plugin_pattern, file, re.IGNORECASE)
+            if plugin_match:
+                plugin = plugin_match.group(1)
+                print plugin
+                all_plugins.append(plugin)
+        return all_plugins
         
     def connect(self):
         """
