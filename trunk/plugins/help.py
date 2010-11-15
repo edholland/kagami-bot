@@ -19,7 +19,6 @@ Copyright (C) 2010, Peter Andersson < peter@keiji.se >
 """
 
 from plugin import Plugin
-import re
 
 class Help(Plugin):
 
