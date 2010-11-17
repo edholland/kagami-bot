@@ -39,7 +39,7 @@ class Log(Plugin):
         Writes stuff sent on the IRC server down into log files
         """
         current_time = strftime("%b %d %H:%M:%S")
-        privmsg_match = re.match(":(.+)!.+ PRIVMSG (#.+) :(.*)$", line, re.IGNORECASE)
+        privmsg_match = re.match(":(.+)!.+ PRIVMSG (#[^ ]+) :(.*)$", line, re.IGNORECASE)
         if privmsg_match:
             sender = privmsg_match.group(1)
             channel= privmsg_match.group(2)
