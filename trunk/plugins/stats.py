@@ -63,13 +63,17 @@ class Stats(Plugin):
             url_match = re.match(url_pattern, message)
             if url_match:
                 urls = 1
+            commands = 0
+            if self.is_command(line):
+                commands = 1
             if sender in self.user_data:
                 old_data = self.user_data[sender]
                 lines = old_data[0] + lines
                 words = old_data[1] + words
                 chars = old_data[2] + chars
                 urls = old_data[3] + urls
-            self.user_data.update({sender: [lines,words,chars,urls]})
+                commands = old_data[4] + commands
+            self.user_data.update({sender: [lines,words,chars,urls,commands]})
             self.save_object_to_file(self.user_data, "user_data")
         
     def stat(self,argument):
@@ -81,10 +85,10 @@ class Stats(Plugin):
         else:
             user = self.sender
         if user in self.user_data:
-            lines, words, chars, urls = self.user_data[user]
+            lines, words, chars, urls, commands = self.user_data[user]
             message = [
                        "%s has posted %s lines consisting of %s words and %s characters." % (user, lines, words, chars),
-                       "Of all those meaningless lines %s did included a URL" % urls,
+                       "Of all those meaningless lines %s did include a URL and %s were commands for the bot." % (urls, commands),
                        ]
             self.send(message)
         else:
