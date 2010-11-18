@@ -66,7 +66,7 @@ class Log(Plugin):
             message = privmsg_match.group(3)
             log_message = "%s %s: %s\n" % (current_time, sender, message)
             filename = "%s.messages" % channel
-            self.append_to_file(log_message, filename)
+            self.append_to_txt_file(log_message, filename)
             log_message = "%s %s: %s" % (channel, sender, message)
             self.last_messages.appendleft(log_message)
             self.last_messages.pop()
@@ -76,14 +76,14 @@ class Log(Plugin):
                 url = url_match.group(1)
                 log_message = "%s %s: %s\n" % (current_time, sender, url)
                 filename = "%s.urls" % channel
-                self.append_to_file(log_message, filename)
+                self.append_to_txt_file(log_message, filename)
                 log_message = "%s %s: %s" % (channel, sender, url)
                 self.last_urls.appendleft(log_message)
                 self.last_urls.pop()
                 self.save_object_to_file(self.last_urls, "last_urls")
         log_message = "%s: %s\n" % (current_time, line)
         filename = "kagami"
-        self.append_to_file(log_message, filename)
+        self.append_to_txt_file(log_message, filename)
         
     def urls (self, arguments):
         temp = deque([])
