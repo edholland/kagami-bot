@@ -31,6 +31,7 @@ class Bot(object):
     def __init__(self, setup_filename):
         self.load_setup_file(setup_filename)
         self.command_info = {}
+        self.command_info_only_priv_msg_to_bot = {}
         self.load_plugins(self.plugins_to_load)
         self.connected = False
         self.time_of_last_messages_sent_to_bot = deque([0,0,0,0])
@@ -100,6 +101,7 @@ class Bot(object):
                 print "Failed to load plugin: %s" % plugin
         for plugin in self.plugins:
             self.command_info.update(plugin.command_info)
+            self.command_info_only_priv_msg_to_bot.update(plugin.command_info_only_priv_msg_to_bot)
             
     def get_names_of_all_plugins(self):
         """

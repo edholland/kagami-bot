@@ -24,18 +24,21 @@ class Help(Plugin):
 
     def __init__(self, teh_bot):
         Plugin.__init__(self, teh_bot)
-        self.command_dictionary = {
-                                   "help": self.help,
-                                   }
+        self.command_dictionary_only_priv_msg_to_bot = {
+                                                        "help": self.help,
+                                                        }
+        self.command_info_only_priv_msg_to_bot = {
+                                                  "help": [
+                                                           "  %shelp" % self.teh_bot.command_prefix,
+                                                           "Shows information about the commands that the bot understands",
+                                                           ],
+                             }
         
     def do(self,line):
-        if self.message_to_bot(line):
-            #Only answer to private message sent directly to the bot
-            if not Plugin.do(self, line):
-                if not self.is_command(line):
-                    self.greeting("")
-                else:
-                    return False
+        if Plugin.do(self, line):
+            return True
+        elif self.message_to_bot(line) and not self.is_command(line):
+            self.greeting("")
             return True
         else:
             return False
@@ -56,15 +59,28 @@ class Help(Plugin):
         Sends list of all commands or info on a specific command
         """
         command_info = self.teh_bot.command_info
+        command_info_only_priv_msg_to_bot = self.teh_bot.command_info_only_priv_msg_to_bot
         command_prefix = self.teh_bot.command_prefix
         if argument in command_info:
             self.send(command_info[argument])
+        elif argument in command_info_only_priv_msg_to_bot:
+            self.send(command_info_only_priv_msg_to_bot[argument])
         elif len(argument) == 0:
             commands = command_info.keys()
+            priv_commands = command_info_only_priv_msg_to_bot.keys()
+            priv_commands = map(self.private_command_format, priv_commands)
+            commands.extend(priv_commands)
             commands.sort()
             answer = ["I understand:"]
             for command in commands:
                 command_string = "  %s%s" % (command_prefix, command)
                 answer.append(command_string)
+            answer.append("(*Command does only work in a private chat with the bot)")
             answer.append("Type '%shelp COMMAND' to see how a command works" % command_prefix)
             self.send(answer)
+            
+    def private_command_format(self,command):
+        """
+        Adds a * after commands only working in a private chat with the bot
+        """
+        return "%s*" % command
