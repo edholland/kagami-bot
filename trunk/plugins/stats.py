@@ -51,9 +51,9 @@ class Stats(Plugin):
         """
         Stores/Updates data for the user who sent the current line
         """
-        privmsg_pattern = "^:(.+)!.+ PRIVMSG (.+) :(.+)$"
+        privmsg_pattern = "^:(.+)!.+ PRIVMSG ([^ ]+) :(.+)$"
         privmsg_match = re.match(privmsg_pattern, line)
-        if privmsg_match:
+        if privmsg_match and privmsg_match.group(2) != self.teh_bot.nick:
             sender, channel, message = privmsg_match.groups()
             lines = 1
             words = len(message.split())

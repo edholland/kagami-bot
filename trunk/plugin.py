@@ -41,7 +41,7 @@ class Plugin(object):
         self.command_info_only_priv_msg_to_bot = {}
         self.sender = ""
         self.channel = ""
-        self.command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s(.+)$" % teh_bot.command_prefix
+        self.command_pattern = "^:(.+)!.+ PRIVMSG ([^ ]+) :%s(.+)$" % teh_bot.command_prefix
         if not os.path.isdir("plugins/save"):
             os.mkdir("plugins/save/")
     
