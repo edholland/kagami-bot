@@ -86,11 +86,13 @@ class Log(Plugin):
         self.append_to_file(log_message, filename)
         
     def urls (self, arguments):
-        temp = self.last_urls
-        temp.reverse()
+        temp = deque([])
+        for url in self.last_urls:
+            temp.appendleft(url)
         self.send(temp)
         
     def messages (self, arguments):
-        temp = self.last_messages
-        temp.reverse()
+        temp = deque([])
+        for messages in self.last_messages:
+            temp.appendleft(messages)
         self.send(temp)
