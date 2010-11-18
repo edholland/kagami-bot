@@ -242,7 +242,8 @@ class Bot(object):
             # Sleep for a short time to prevent flooding
             time.sleep(self.wait_before_sending_line)
             self.wait_before_sending_line += 0.2
-            self.socket.send("PRIVMSG %s :%s\r\n" % (to, line))
+            if len(line) > 0:
+                self.socket.send("PRIVMSG %s :%s\r\n" % (to, line))
         self.time_of_last_sent_line = time.time()
     
     def send_message_without_flood(self, to, messages):
