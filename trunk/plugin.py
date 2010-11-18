@@ -104,13 +104,11 @@ class Plugin(object):
         file = open(filepath,"a")
         file.write(message)
         file.close()
-        print os.path.getsize(filepath)
         if os.path.getsize(filepath) > self.max_txt_filesize:
             file = open(filepath,"r")
             lines = file.readlines()
             file.close()
             lines_to_remove = int(floor(len(lines) / 10))
-            print lines_to_remove
             del lines[:lines_to_remove]
             file = open(filepath,"w")
             file.writelines(lines)
