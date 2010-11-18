@@ -98,7 +98,7 @@ class Plugin(object):
         
     def append_to_file(self,message,filename):
         plugin_filename = self.get_plugin_filename()
-        filepath = "plugins/save/%s.%s" % (plugin_filename, filename)
+        filepath = "plugins/save/%s.%s.txt" % (plugin_filename, filename)
         file = open(filepath,"a")
         file.write(message)
         file.close()
