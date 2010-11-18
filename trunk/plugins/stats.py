@@ -35,6 +35,7 @@ class Stats(Plugin):
         self.command_info = {
                              "stat": [
                                       "  %sstat USER" % self.teh_bot.command_prefix,
+                                      "  %sstat" % self.teh_bot.command_prefix,
                                       "Shows stats about the user",
                                       ],
                              }

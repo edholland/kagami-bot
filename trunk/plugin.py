@@ -30,10 +30,15 @@ class Plugin(object):
     def __init__(self, teh_bot):
         """
         Plugins should add there command-functions to self.command_dictionary
+        and/or self.command_dictionary_only_priv_msg_to_bot.
+        Plugins should aldo add information about their commands in self.command_info
+        and/or self.command_info_only_priv_msg_to_bot
         """
         self.teh_bot = teh_bot
         self.command_dictionary = {}
+        self.command_dictionary_only_priv_msg_to_bot = {}
         self.command_info = {}
+        self.command_info_only_priv_msg_to_bot = {}
         self.sender = ""
         self.channel = ""
         self.command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s(.+)$" % teh_bot.command_prefix
@@ -45,14 +50,18 @@ class Plugin(object):
         Looks in the command dictionary after a function matching the command.
         The function should only return True if the plugin sent a message to a channel/user.
         """
-        match = re.match(self.command_pattern, line)
-        if match:
-            self.sender, self.channel, command_line = match.groups()
+        command_match = re.match(self.command_pattern, line)
+        if command_match:
+            self.sender, self.channel, command_line = command_match.groups()
             split_command_line = command_line.split()
             command = split_command_line[0]
-            if(command in self.command_dictionary):
+            if command in self.command_dictionary:
                 self.command_dictionary[command](command_line[len(command):].strip())
                 return True
+            elif self.channel == self.teh_bot.nick:
+                if command in self.command_dictionary_only_priv_msg_to_bot:
+                    self.command_dictionary_only_priv_msg_to_bot[command](command_line[len(command):].strip())
+                    return True
         return False
     
     def send (self, message):
