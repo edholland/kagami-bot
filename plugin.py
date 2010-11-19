@@ -45,6 +45,8 @@ class Plugin(object):
         self.command_pattern = "^:(.+)!.+ PRIVMSG ([^ ]+) :%s(.+)$" % teh_bot.command_prefix
         if not os.path.isdir("plugins/save"):
             os.mkdir("plugins/save/")
+        if not os.path.isdir("plugins/config"):
+            os.mkdir("plugins/config/")
         self.max_txt_filesize = 524288
     
     def do(self, line):
@@ -65,6 +67,13 @@ class Plugin(object):
                     self.command_dictionary_only_priv_msg_to_bot[command](command_line[len(command):].strip())
                     return True
         return False
+    
+    def do_often(self):
+        """
+        Can be used by plugins knowing that it will run rather often
+        (at least every time the socket reaches a timeout (normaly every 2 minutes))
+        """
+        pass
     
     def send (self, message):
         """

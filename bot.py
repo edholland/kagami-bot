@@ -155,6 +155,8 @@ class Bot(object):
         number_of_socket_timeouts = 0
         while self.connected:
             try:
+                for plugin in self.plugins:
+                    plugin.do_often()
                 readbuffer += self.socket.recv(1024)
                 number_of_socket_timeouts = 0 # Resets socket timeouts if it receives anything
                 lines = readbuffer.split("\n")
