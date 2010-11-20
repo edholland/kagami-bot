@@ -1,0 +1,44 @@
+# This file is used by the plugin special_days.
+# It's originally set up for Swedish holidays so change the dates
+# if you are in another country.
+# day/month: message
+# Dayname day/month-day/month: message
+
+1/1:             Happy New Year!
+21/1:            It's the National Hugging Day!
+31/1:            It's the National Gorilla Suit Day!
+
+1/2:             Happy Bubble Gum Day!
+13/2:            It's the National Loot Day!
+14/2:            Happy Valentine's Day!
+
+4/3:             Happy Pi Day!
+14/3:            Happy White Day!
+
+1/4:             Happy April Fools Day! Don't trust anyone today!
+5/4:             First Contact Day!
+14/4:            It's the Black day!
+20/4:            It's the International Cannabis Day :P
+
+Fri 1/5-7/5:     Happy No Pants Day :P
+25/5:            Don't Panic! Just remember the towel today!
+
+Sat 20/6-26/6:   Happy Midsummer!
+
+Sun 1/8-7/8:     Happy Friendship Day!
+
+19/9:            Arrr! It's the International Talk Like a Pirate Day!
+
+23/10:           Happy Mole Day!
+30/10:           It's the Mischief Night!
+
+Fri 23/11-29/11: Happy Black Friday!
+Sun 27/11-3/12:  1st Advent!
+
+Sun 4/12-10/12:  2nd Advent!
+5/12:            It's the Ninja Day!
+Sun 11/12-17/12: 3rd Advent!
+13/12:           Happy Lucia Day!
+14/12:           It's the Monkey Day!
+Sun 18/12-24/12: 4th Advent!
+24/12:           Merry Christmas!
