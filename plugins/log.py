@@ -86,12 +86,18 @@ class Log(Plugin):
         self.append_to_txt_file(log_message, filename)
         
     def urls (self, arguments):
+        """
+        Returns the last urls seen by the bot
+        """
         temp = deque([])
         for url in self.last_urls:
             temp.appendleft(url)
         self.send(temp)
         
     def messages (self, arguments):
+        """
+        Returns the last sen messages seen by the bot
+        """
         temp = deque([])
         for messages in self.last_messages:
             temp.appendleft(messages)

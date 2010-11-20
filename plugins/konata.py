@@ -31,6 +31,7 @@ class Konata(Plugin):
     
     def __init__(self, teh_bot):
         Plugin.__init__(self, teh_bot)
+        # Command pattern changed so that both the bot and konata recognise it as a command
         self.command_pattern = "^:(.+)!.+ PRIVMSG (.+) :!*(.+)$"
         random.seed
         self.command_dictionary = {
@@ -38,12 +39,6 @@ class Konata(Plugin):
                                    "rockpaperscissors": self.jankenpon,
                                    "rockpaperscissorslizardspock": self.jankenpon,
                                    }
-        self.command_info = {
-                             "jankenpon": [
-                                          "  %sjankenpon" % self.teh_bot.command_prefix,
-                                          "Starts a game of Rock Paper Scissors Lizard Spock with the bot konata",
-                                          ],
-                             }
         self.jankenpon = {
                           "Rock": ["Lizard", "Spock"],
                           "Paper": ["Rock", "Spock"],
