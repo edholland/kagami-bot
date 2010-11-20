@@ -108,6 +108,11 @@ class Plugin(object):
             return False
         
     def append_to_txt_file(self,message,filename):
+        """
+        Append message to the end of a text file (or log file)
+        Old data at the top of the file will be removed if the file
+        gets to big
+        """
         plugin_filename = self.get_plugin_filename()
         filepath = "plugins/save/%s.%s.txt" % (plugin_filename, filename)
         file = open(filepath,"a")
@@ -132,6 +137,9 @@ class Plugin(object):
         return name
     
     def message_to_bot(self,line):
+        """
+        Returns true if the line contains a private message to the bot
+        """
         message_to_bot_pattern = "^:(.+)!.+ PRIVMSG %s :.+$" % self.teh_bot.nick
         message_to_bot = re.match(message_to_bot_pattern, line)
         if message_to_bot:
@@ -140,6 +148,9 @@ class Plugin(object):
         return message_to_bot
     
     def is_command(self,line):
+        """
+        Returns true if the line contains a bot command
+        """
         command_pattern = "^:(.+)!.+ PRIVMSG (.+) :%s.+$" % self.teh_bot.command_prefix
         command = re.match(command_pattern, line)
         if command:
