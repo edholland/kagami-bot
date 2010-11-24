@@ -81,6 +81,8 @@ class Plugin(object):
         """
         if self.channel == self.teh_bot.nick:
             self.channel = self.sender
+        if len(self.channel) == 0 and len(self.teh_bot.channels) > 0:
+            self.channel = self.teh_bot.channels
         self.teh_bot.send_message_without_flood(self.channel, message)
         
     def send_raw_irc_message (self, message):

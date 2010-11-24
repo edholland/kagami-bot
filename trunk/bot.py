@@ -236,17 +236,18 @@ class Bot(object):
         """
         Sends a message to a user or a channel
         """
-        if((self.time_of_last_sent_line - time.time()) < 10):
-            # Resets wait time if some time has passed since last sent message
-            self.wait_before_sending_line = 0.0
-        for line in messages:
-            line = line.rstrip()
-            # Sleep for a short time to prevent flooding
-            time.sleep(self.wait_before_sending_line)
-            self.wait_before_sending_line += 0.2
-            if len(line) > 0:
-                self.socket.send("PRIVMSG %s :%s\r\n" % (to, line))
-        self.time_of_last_sent_line = time.time()
+        if len(to) > 0 and len(messages) > 0:
+            if((self.time_of_last_sent_line - time.time()) < 10):
+                # Resets wait time if some time has passed since last sent message
+                self.wait_before_sending_line = 0.0
+            for line in messages:
+                line = line.rstrip()
+                # Sleep for a short time to prevent flooding
+                time.sleep(self.wait_before_sending_line)
+                self.wait_before_sending_line += 0.2
+                if len(line) > 0:
+                    self.socket.send("PRIVMSG %s :%s\r\n" % (to, line))
+            self.time_of_last_sent_line = time.time()
     
     def send_message_without_flood(self, to, messages):
         if self.flood_safe():
