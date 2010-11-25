@@ -36,6 +36,7 @@ class Plugin(object):
         and/or self.command_info_only_priv_msg_to_bot
         """
         self.teh_bot = teh_bot
+        self.command_prefix = teh_bot.command_prefix
         self.command_dictionary = {}
         self.command_dictionary_only_priv_msg_to_bot = {}
         self.command_info = {}
@@ -45,8 +46,6 @@ class Plugin(object):
         self.command_pattern = "^:(.+)!.+ PRIVMSG ([^ ]+) :%s(.+)$" % teh_bot.command_prefix
         if not os.path.isdir("plugins/save"):
             os.mkdir("plugins/save/")
-        if not os.path.isdir("plugins/config"):
-            os.mkdir("plugins/config/")
         self.max_txt_filesize = 524288
     
     def do(self, line):
@@ -130,6 +129,9 @@ class Plugin(object):
             file.writelines(lines)
     
     def get_plugin_filename(self):
+        """
+        Returns filename of plugin
+        """
         name = ""
         string = self.__str__()
         str_pattern = "^.+\.(.+)\..* .*$"

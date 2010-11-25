@@ -28,14 +28,13 @@ class Stats(Plugin):
 
     def __init__(self, teh_bot):
         Plugin.__init__(self, teh_bot)
-        self.command_prefix = self.teh_bot.command_prefix
         self.command_dictionary = {
                                    "stat": self.stat,
                                    }
         self.command_info = {
                              "stat": [
-                                      "  %sstat USER" % self.teh_bot.command_prefix,
-                                      "  %sstat" % self.teh_bot.command_prefix,
+                                      "  %sstat USER" % self.command_prefix,
+                                      "  %sstat" % self.command_prefix,
                                       "Shows stats about the user",
                                       ],
                              }
@@ -59,8 +58,8 @@ class Stats(Plugin):
             words = len(message.split())
             chars = len(message.replace(" ",""))
             urls = 0
-            url_pattern = ".*(HTTP|http).*"
-            url_match = re.match(url_pattern, message)
+            url_pattern = ".*http.*"
+            url_match = re.match(url_pattern, message, re.IGNORECASE)
             if url_match:
                 urls = 1
             commands = 0

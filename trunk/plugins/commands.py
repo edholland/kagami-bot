@@ -29,7 +29,6 @@ class Commands(Plugin):
 
     def __init__(self, teh_bot):
         Plugin.__init__(self, teh_bot)
-        self.command_prefix = teh_bot.command_prefix
         random.seed()
         self.command_dictionary = {
                               "choice": self.random,
@@ -39,7 +38,7 @@ class Commands(Plugin):
                               }
         self.command_info = {
                              "question": [
-                                          "  %squestion QUESTION" % teh_bot.command_prefix,
+                                          "  %squestion QUESTION" % self.command_prefix,
                                           "Returns a positive or a negative response to your question",
                                           ],
                              "scale":    [

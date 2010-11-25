@@ -42,11 +42,11 @@ class Log(Plugin):
                                                         }
         self.command_info_only_priv_msg_to_bot = {
                                                   "messages": [
-                                                               "  %smessages" % self.teh_bot.command_prefix,
+                                                               "  %smessages" % self.command_prefix,
                                                                "Shows the last messages the bot have seen",
                                                                ],
                                                   "urls": [
-                                                               "  %surls" % self.teh_bot.command_prefix,
+                                                               "  %surls" % self.command_prefix,
                                                                "Shows the last urls the bot have seen",
                                                                ],
                                                    }
@@ -59,7 +59,7 @@ class Log(Plugin):
         Writes stuff sent on the IRC server down into log files
         """
         current_time = strftime("%b %d %H:%M:%S")
-        privmsg_match = re.match(":(.+)!.+ PRIVMSG (#[^ ]+) :(.*)$", line, re.IGNORECASE)
+        privmsg_match = re.match(":(.+)!.+ PRIVMSG (#[^ ]+) :(.*)$", line)
         if privmsg_match:
             sender = privmsg_match.group(1)
             channel= privmsg_match.group(2)
