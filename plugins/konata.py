@@ -73,11 +73,11 @@ class Konata(Plugin):
         if match:
             says = match.group(1)
             question = "^.*(Yes|No).*$"
-            question_match = re.match(question, says)
+            question_match = re.match(question, says, re.IGNORECASE)
             scale = "^.*\|(X|=){10}\|.*$"
             scale_match = re.match(scale, says)
             jankenpon = "^.*(Rock|Paper|Scissors|Spock|Lizard).*$"
-            jankenpon_match = re.match(jankenpon, says)
+            jankenpon_match = re.match(jankenpon, says, re.IGNORECASE)
             if question_match or scale_match:
                 answers = [
                        "Don't listen to her",

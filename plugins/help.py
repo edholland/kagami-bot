@@ -29,7 +29,7 @@ class Help(Plugin):
                                                         }
         self.command_info_only_priv_msg_to_bot = {
                                                   "help": [
-                                                           "  %shelp" % self.teh_bot.command_prefix,
+                                                           "  %shelp" % self.command_prefix,
                                                            "Shows information about the commands that the bot understands",
                                                            ],
                              }
@@ -60,7 +60,6 @@ class Help(Plugin):
         """
         command_info = self.teh_bot.command_info
         command_info_only_priv_msg_to_bot = self.teh_bot.command_info_only_priv_msg_to_bot
-        command_prefix = self.teh_bot.command_prefix
         if argument in command_info:
             self.send(command_info[argument])
         elif argument in command_info_only_priv_msg_to_bot:
@@ -73,10 +72,10 @@ class Help(Plugin):
             commands.sort()
             answer = ["I understand:"]
             for command in commands:
-                command_string = "  %s%s" % (command_prefix, command)
+                command_string = "  %s%s" % (self.command_prefix, command)
                 answer.append(command_string)
             answer.append("(*Command does only work in a private chat with the bot)")
-            answer.append("Type '%shelp COMMAND' to see how a command works" % command_prefix)
+            answer.append("Type '%shelp COMMAND' to see how a command works" % self.command_prefix)
             self.send(answer)
             
     def private_command_format(self,command):
