@@ -52,7 +52,7 @@ class Special_days(Plugin):
                 if pattern1_match:
                     day, month, message = pattern1_match.groups()
                     if int(day) == cur_day and int(month) == cur_month:
-                        self.send(message)
+                        self.send([message])
                         pass
                 elif pattern2_match:
                     day_name, day_from, month_from, day_to, month_to, message = pattern2_match.groups()
@@ -71,5 +71,5 @@ class Special_days(Plugin):
                                 and cur_day <= day_to)
                             )
                         ):
-                        self.send(message)
+                        self.send([message])
             self.last_announced_date = date.today()
