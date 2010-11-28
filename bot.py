@@ -236,7 +236,7 @@ class Bot(object):
         """
         Sends a message to a user or a channel
         """
-        if not isinstance(messages, list()):
+        if type(messages) != type(list()):
             messages = [messages]
         if len(to) > 0:
             if((self.time_of_last_sent_line - time.time()) < 10):
