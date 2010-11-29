@@ -243,7 +243,6 @@ class Bot(object):
                 # Resets wait time if some time has passed since last sent message
                 self.wait_before_sending_line = 0.0
             for line in messages:
-                print line
                 line = line.rstrip()
                 if len(line) > 0:
                     # Sleep for a short time to prevent flooding
