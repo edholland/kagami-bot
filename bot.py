@@ -236,13 +236,14 @@ class Bot(object):
         """
         Sends a message to a user or a channel
         """
-        if type(messages) != type(list()):
+        if not (type(messages) == type(list()) or type(messages) == type(deque())):
             messages = [messages]
         if len(to) > 0:
             if((self.time_of_last_sent_line - time.time()) < 10):
                 # Resets wait time if some time has passed since last sent message
                 self.wait_before_sending_line = 0.0
             for line in messages:
+                print line
                 line = line.rstrip()
                 if len(line) > 0:
                     # Sleep for a short time to prevent flooding
