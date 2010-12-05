@@ -83,6 +83,13 @@ class Plugin(object):
         if len(self.channel) == 0 and len(self.teh_bot.channels) > 0:
             self.channel = self.teh_bot.channels
         self.teh_bot.send_message_without_flood(self.channel, message)
+    
+    def send_to_all_channels (self, message):
+        """
+        Sends a message to all channels that the bot has joined
+        """
+        if len(self.teh_bot.channels) > 0:
+            self.teh_bot.send_message_without_flood(self.teh_bot.channels, message)
         
     def send_raw_irc_message (self, message):
         """
